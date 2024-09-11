@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI } from 'https://esm.run/@google/generative-ai';
 
 // chrome.storage.sync.clear()
 
@@ -74,11 +75,13 @@ chrome.commands.onCommand.addListener((command) => {
 chrome.runtime.onMessage.addListener((req, sender, res) => {
   if (req.message === 'capture') {
     chrome.tabs.query({active: true, currentWindow: true}, (tab) => {
-      chrome.tabs.captureVisibleTab(tab.windowId, {format: req.format, quality: req.quality}, (image) => {
+      chrome.tabs.captureVisibleTab(tab.windowId, {format: req.format, quality: req.quality}, async (image) => {
         // image is base64
-        res({message: 'image', image})
-      })
-    })
+        // Process the image with Gemini API
+        const processedImage = await processWithGeminiAPI(image); // Add this line
+        res({message: 'image', image: processedImage}); // Update this line
+      });
+    });
   }
   else if (req.message === 'active') {
     if (req.active) {
@@ -108,3 +111,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
   }
   return true
 })
+
+// Function to process image with Gemini API
+async function processWithGeminiAPI(image) {
+  // Call the Gemini API here and return the result
+  return await GoogleGenerativeAI.processImage(image); // Example implementation
+}

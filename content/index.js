@@ -1,4 +1,3 @@
-
 var jcrop, selection
 
 var overlay = ((active) => (state) => {
@@ -53,19 +52,19 @@ var init = (done) => {
 var capture = (force) => {
   chrome.storage.sync.get((config) => {
     if (selection && (config.method === 'crop' || (config.method === 'wait' && force))) {
-      jcrop.release()
+      jcrop.release();
       setTimeout(() => {
-        var _selection = selection
+        var _selection = selection;
         chrome.runtime.sendMessage({
           message: 'capture', format: config.format, quality: config.quality
         }, (res) => {
-          overlay(false)
+          overlay(false);
           crop(res.image, _selection, devicePixelRatio, config.scaling, config.format, (image) => {
-            save(image, config.format, config.save, config.clipboard, config.dialog)
-            selection = null
-          })
-        })
-      }, 50)
+            save(image, config.format, config.save, config.clipboard, config.dialog);
+            selection = null;
+          });
+        });
+      }, 50);
     }
     else if (config.method === 'view') {
       chrome.runtime.sendMessage({
